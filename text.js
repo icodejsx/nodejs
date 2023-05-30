@@ -1,16 +1,34 @@
-let http = require('http');
+let express = require('express');
+let ourApp = express();
+ourApp.use(express.urlencoded({ extended:false}));
 
-let ourApp = http.createServer(function (req, res) {
-    if (req.url == '/') {
-    res.end("Hello, and welcome to our Website.")
-    }
-
-    if (req.url == '/about') {
-    res.end(" there, and welcome to our about page.")
-        
-    } 
-    res.end("we cannot find the page ya looking for")
+ourApp.get('/', function (req, res) {
+    res.send(`
+    <form action='/answer' method='post'>
+    <p>What Color is the sky on a clear and sunny day?</p>
+    <input type="text" name="skyColor">
+    <button> Submit Answer </button>
+    </form>
     
-   
+    `);
 })
+
+ourApp.post('/answer', function (req, res) { 
+    if (req.body.skyColor.toUpperCase() === 'BLUE') {
+        res.send(`
+       <p>Congrats thats is the correct answer</p>
+       <a href="/">Back to homepage</a>
+        `)
+    } else {
+            res.send(`
+       <p>Sorry thats is incorrect</p>
+       <a href="/">back to homepage</a>
+        `)
+   }
+})
+
+ourApp.get('/answer', function (req, res) { 
+    res.send('Are you lost there is noting to see here.')
+})
+
 ourApp.listen(5000)
